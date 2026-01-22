@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
 import { CheckCircle2 } from 'lucide-react'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 export default function RegistrationsPage() {
   const { isTenantUser, user } = useAuthStore()
@@ -80,9 +81,7 @@ export default function RegistrationsPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingSpinner size="md" />
       </Layout>
     )
   }

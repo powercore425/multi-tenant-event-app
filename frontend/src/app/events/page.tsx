@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 import { useAuthStore } from '@/store/authStore'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 export default function EventsPage() {
   const [events, setEvents] = useState<any[]>([])
@@ -55,9 +56,7 @@ export default function EventsPage() {
   if (!mounted) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="flex justify-center items-center h-screen">
-          <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingSpinner fullScreen size="lg" />
       </div>
     )
   }
@@ -67,9 +66,7 @@ export default function EventsPage() {
     if (loading) {
       return (
         <Layout>
-          <div className="flex justify-center items-center h-64">
-            <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-          </div>
+          <LoadingSpinner size="md" />
         </Layout>
       )
     }
@@ -159,11 +156,9 @@ export default function EventsPage() {
         <div className="px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Events</h1>
           
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-            </div>
-          ) : (
+              {loading ? (
+                <LoadingSpinner size="md" />
+              ) : (
             <>
               {error && (
                 <div className="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded">

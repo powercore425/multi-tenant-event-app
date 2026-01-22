@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { Save } from 'lucide-react'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
@@ -126,9 +127,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingSpinner size="md" />
       </Layout>
     )
   }

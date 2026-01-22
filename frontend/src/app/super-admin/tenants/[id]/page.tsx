@@ -8,6 +8,7 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { Building2, Users, Calendar, Mail, Globe, Palette, Settings, ArrowLeft } from 'lucide-react'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 export default function TenantViewPage() {
   const { isSuperAdmin } = useAuthStore()
@@ -41,9 +42,7 @@ export default function TenantViewPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingSpinner size="md" />
       </Layout>
     )
   }

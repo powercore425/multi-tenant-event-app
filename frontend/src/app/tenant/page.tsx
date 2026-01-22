@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { Calendar, Users, Ticket, DollarSign, TrendingUp, Activity } from 'lucide-react'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
 
@@ -40,9 +41,7 @@ export default function TenantDashboard() {
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingSpinner size="md" />
       </Layout>
     )
   }

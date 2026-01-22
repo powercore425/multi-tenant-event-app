@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Shield } from 'lucide-react'
+import { LoadingSpinner } from './LoadingSpinner'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -51,9 +52,7 @@ export function Layout({ children }: LayoutProps) {
   if (!mounted) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="flex justify-center items-center h-screen">
-          <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingSpinner fullScreen size="lg" />
       </div>
     )
   }
@@ -61,9 +60,7 @@ export function Layout({ children }: LayoutProps) {
   if (!isAuthenticated()) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="flex justify-center items-center h-screen">
-          <div className="text-gray-500 dark:text-gray-400">Redirecting...</div>
-        </div>
+        <LoadingSpinner fullScreen size="lg" text="Redirecting..." />
       </div>
     )
   }

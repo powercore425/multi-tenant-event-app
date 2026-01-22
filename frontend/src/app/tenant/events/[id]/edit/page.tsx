@@ -8,6 +8,7 @@ import api from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
 import Link from 'next/link'
 import { Save, X } from 'lucide-react'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 interface EventForm {
   title: string
@@ -101,9 +102,7 @@ export default function EditEventPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingSpinner size="md" />
       </Layout>
     )
   }

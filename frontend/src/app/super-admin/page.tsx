@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts'
 import { Building2, Users, Calendar, TrendingUp, Activity, DollarSign, Shield, Zap, Globe } from 'lucide-react'
 import Link from 'next/link'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 const COLORS = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444']
 
@@ -40,9 +41,7 @@ export default function SuperAdminDashboard() {
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingSpinner size="md" />
       </Layout>
     )
   }

@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { CheckCircle, XCircle, Trash2, UserPlus } from 'lucide-react'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 interface UserForm {
   email: string
@@ -92,9 +93,7 @@ export default function UsersPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingSpinner size="md" />
       </Layout>
     )
   }

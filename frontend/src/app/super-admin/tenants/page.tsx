@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Eye, Ban, CheckCircle, Trash2, Edit, Plus } from 'lucide-react'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 export default function TenantsPage() {
   const { isSuperAdmin } = useAuthStore()
@@ -77,9 +78,7 @@ export default function TenantsPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingSpinner size="md" />
       </Layout>
     )
   }

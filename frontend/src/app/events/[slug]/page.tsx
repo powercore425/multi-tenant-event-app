@@ -10,6 +10,7 @@ import { useAuthStore } from '@/store/authStore'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import Link from 'next/link'
 import { CheckCircle2, Calendar, Ticket, User } from 'lucide-react'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 interface RegistrationForm {
   ticketId: string
@@ -290,11 +291,7 @@ export default function EventDetailPage() {
   // Render content based on authentication status
   const renderContent = () => {
     if (loading) {
-      return (
-        <div className="flex justify-center items-center h-64">
-          <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-        </div>
-      )
+      return <LoadingSpinner size="md" />
     }
 
     if (fetchError || !event) {
@@ -571,9 +568,7 @@ export default function EventDetailPage() {
   if (!mounted) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="flex justify-center items-center h-screen">
-          <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingSpinner fullScreen size="lg" />
       </div>
     )
   }

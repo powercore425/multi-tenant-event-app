@@ -9,6 +9,7 @@ import { useAuthStore } from '@/store/authStore'
 import { format } from 'date-fns'
 import Link from 'next/link'
 import { Plus, X, Save, Edit, Trash2 } from 'lucide-react'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 interface TicketForm {
   name: string
@@ -144,9 +145,7 @@ export default function TenantEventViewPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-gray-500 dark:text-gray-400">Loading...</div>
-        </div>
+        <LoadingSpinner size="md" />
       </Layout>
     )
   }
