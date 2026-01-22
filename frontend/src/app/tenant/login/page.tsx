@@ -58,7 +58,7 @@ export default function TenantLoginPage() {
             Organization Sign In
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-            Sign in to manage your organization's events
+            Sign in to manage your organization&apos;s events
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
@@ -108,7 +108,7 @@ export default function TenantLoginPage() {
 
           <div className="text-center space-y-2">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Don't have an organization?{' '}
+              Don&apos;t have an organization?{' '}
               <Link href="/tenant/signup" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">
                 Create one
               </Link>

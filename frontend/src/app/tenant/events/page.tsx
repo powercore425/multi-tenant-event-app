@@ -10,6 +10,7 @@ import { format } from 'date-fns'
 import { useTenantColors } from '@/hooks/useTenantColors'
 import { Grid, List, Eye, Edit, Trash2, Plus } from 'lucide-react'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
+import Image from 'next/image'
 
 export default function TenantEventsPage() {
   const { isTenantUser, user } = useAuthStore()
@@ -49,6 +50,7 @@ export default function TenantEventsPage() {
 
   useEffect(() => {
     fetchEvents()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter])
 
   const handleDelete = async (id: string) => {
@@ -181,9 +183,11 @@ export default function TenantEventsPage() {
               <div key={event.id} className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 hover:scale-[1.02] group overflow-hidden">
                 {event.image && (
                   <div className="overflow-hidden">
-                    <img
+                    <Image
                       src={event.image}
                       alt={event.title}
+                      width={800}
+                      height={400}
                       className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                   </div>
@@ -263,9 +267,11 @@ export default function TenantEventsPage() {
                   <div className="flex flex-col lg:flex-row gap-4">
                     {event.image && (
                       <div className="flex-shrink-0 overflow-hidden rounded-lg">
-                        <img
+                        <Image
                           src={event.image}
                           alt={event.title}
+                          width={192}
+                          height={128}
                           className="w-full lg:w-48 h-32 lg:h-24 object-cover rounded-lg transition-transform duration-300 hover:scale-110"
                         />
                       </div>

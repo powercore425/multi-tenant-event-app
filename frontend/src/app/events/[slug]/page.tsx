@@ -14,6 +14,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { Elements } from '@stripe/react-stripe-js'
 import { PaymentForm } from '@/components/PaymentForm'
 import { getStripe } from '@/lib/stripe'
+import Image from 'next/image'
 
 interface RegistrationForm {
   ticketId: string
@@ -68,6 +69,7 @@ export default function EventDetailPage() {
 
   useEffect(() => {
     fetchEvent()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, tenantSlug])
 
   // Check if user has already registered for this event
@@ -323,9 +325,11 @@ export default function EventDetailPage() {
     return (
       <div className="px-4 sm:px-6 lg:px-8 max-w-6xl">
         {event.image && (
-          <img
+          <Image
             src={event.image}
             alt={event.title}
+            width={1200}
+            height={400}
             className="w-full h-64 object-cover rounded-lg mb-6"
           />
         )}
@@ -343,9 +347,11 @@ export default function EventDetailPage() {
                 </h2>
                 <div className="flex items-center gap-4">
                   {event.tenant.logo ? (
-                    <img
+                    <Image
                       src={event.tenant.logo}
                       alt={event.tenant.name}
+                      width={64}
+                      height={64}
                       className="h-16 w-16 rounded-lg object-cover border-2"
                       style={{ borderColor: event.tenant.primaryColor || '#3b82f6' }}
                     />
@@ -444,7 +450,7 @@ export default function EventDetailPage() {
                     </div>
                     <div>
                       <h2 className="text-xl font-bold text-green-900 dark:text-green-100">Registered!</h2>
-                      <p className="text-sm text-green-700 dark:text-green-300">You're all set for this event</p>
+                      <p className="text-sm text-green-700 dark:text-green-300">You&apos;re all set for this event</p>
                     </div>
                   </div>
 
@@ -577,7 +583,7 @@ export default function EventDetailPage() {
                     <input
                       {...register('firstName', { required: 'First name is required' })}
                       type="text"
-                      readOnly={isAuthenticated() && user}
+                      readOnly={!!(isAuthenticated() && user)}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white read-only:opacity-50 read-only:cursor-not-allowed"
                     />
                     {errors.firstName && (
@@ -591,7 +597,7 @@ export default function EventDetailPage() {
                     <input
                       {...register('lastName', { required: 'Last name is required' })}
                       type="text"
-                      readOnly={isAuthenticated() && user}
+                      readOnly={!!(isAuthenticated() && user)}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white read-only:opacity-50 read-only:cursor-not-allowed"
                     />
                     {errors.lastName && (
@@ -607,7 +613,7 @@ export default function EventDetailPage() {
                   <input
                     {...register('email', { required: 'Email is required', pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: 'Invalid email address' } })}
                     type="email"
-                    readOnly={isAuthenticated() && user}
+                    readOnly={!!(isAuthenticated() && user)}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white read-only:opacity-50 read-only:cursor-not-allowed"
                   />
                   {errors.email && (
