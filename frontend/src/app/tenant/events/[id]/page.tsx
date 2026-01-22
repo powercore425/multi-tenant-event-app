@@ -10,6 +10,7 @@ import { format } from 'date-fns'
 import Link from 'next/link'
 import { Plus, X, Save, Edit, Trash2 } from 'lucide-react'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
+import Image from 'next/image'
 
 interface TicketForm {
   name: string
@@ -57,6 +58,7 @@ export default function TenantEventViewPage() {
       return
     }
     fetchEvent()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTenantUser, router, eventId])
 
   const fetchEvent = async () => {
@@ -190,9 +192,11 @@ export default function TenantEventViewPage() {
         </div>
 
         {event.image && (
-          <img
+          <Image
             src={event.image}
             alt={event.title}
+            width={1200}
+            height={400}
             className="w-full h-64 object-cover rounded-lg mb-6"
           />
         )}
@@ -507,7 +511,7 @@ export default function TenantEventViewPage() {
               ) : (
                 !showTicketForm && (
                   <p className="text-gray-500 dark:text-gray-400 text-center py-4">
-                    No tickets yet. Click "Add Ticket" to create one.
+                    No tickets yet. Click &quot;Add Ticket&quot; to create one.
                   </p>
                 )
               )}
