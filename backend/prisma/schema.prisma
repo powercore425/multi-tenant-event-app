@@ -1,0 +1,308 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  TENANT_ADMIN
+  TENANT_USER
+  ATTENDEE
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  COMPLETED
+}
+
+enum TicketStatus {
+  AVAILABLE
+  SOLD_OUT
+  CLOSED
+}
+
+enum RegistrationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  CHECKED_IN
+}
+
+enum PlanType {
+  FREE
+  BASIC
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+// Super Admin and Tenant Users
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  firstName     String
+  lastName      String
+  role          UserRole  @default(ATTENDEE)
+  tenantId      String?
+  tenant        Tenant?   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  createdEvents Event[]   @relation("EventCreator")
+  registrations Registration[]
+  checkIns      CheckIn[]
+  feedback      Feedback[]
+
+  @@index([email])
+  @@index([tenantId])
+  @@map("users")
+}
+
+// Tenant Organizations
+model Tenant {
+  id              String      @id @default(cuid())
+  name            String
+  slug            String      @unique
+  domain          String?     @unique
+  logo            String?
+  primaryColor    String?     @default("#3B82F6")
+  secondaryColor  String?     @default("#8B5CF6")
+  status          TenantStatus @default(ACTIVE)
+  planType        PlanType    @default(FREE)
+  maxEvents       Int         @default(10)
+  maxUsers        Int         @default(5)
+  maxAttendees    Int         @default(100)
+  stripeCustomerId String?    @unique
+  stripeSubscriptionId String? @unique
+  subscriptionStatus String?   // active, canceled, past_due, etc.
+  subscriptionEndsAt DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  users           User[]
+  events          Event[]
+  settings        TenantSettings?
+  invoices        Invoice[]
+  usageLogs       UsageLog[]
+
+  @@index([slug])
+  @@index([status])
+  @@map("tenants")
+}
+
+// Tenant-specific settings
+model TenantSettings {
+  id                String   @id @default(cuid())
+  tenantId          String   @unique
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  allowPublicEvents Boolean  @default(true)
+  requireApproval   Boolean  @default(false)
+  emailNotifications Boolean @default(true)
+  customDomain      String?
+  integrations      Json?    // Store integration configs as JSON
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("tenant_settings")
+}
+
+// Events
+model Event {
+  id              String      @id @default(cuid())
+  tenantId        String
+  tenant          Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  title           String
+  description     String?     @db.Text
+  slug            String
+  image           String?
+  startDate       DateTime
+  endDate         DateTime
+  timezone        String      @default("UTC")
+  location        String?
+  locationType    String      @default("onsite") // onsite, online, hybrid
+  onlineUrl       String?
+  status          EventStatus @default(DRAFT)
+  isPublic        Boolean     @default(true)
+  maxAttendees    Int?
+  createdById     String
+  createdBy       User        @relation("EventCreator", fields: [createdById], references: [id])
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  tickets         Ticket[]
+  registrations   Registration[]
+  checkIns        CheckIn[]
+  feedback        Feedback[]
+  agenda          AgendaItem[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@index([status])
+  @@index([startDate])
+  @@map("events")
+}
+
+// Event Agenda Items
+model AgendaItem {
+  id          String   @id @default(cuid())
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  title       String
+  description String?  @db.Text
+  startTime   DateTime
+  endTime     DateTime
+  location    String?
+  speaker     String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([eventId])
+  @@map("agenda_items")
+}
+
+// Tickets
+model Ticket {
+  id              String       @id @default(cuid())
+  eventId         String
+  event           Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  name            String
+  description     String?      @db.Text
+  price           Decimal      @default(0) @db.Decimal(10, 2)
+  quantity        Int?         // null = unlimited
+  sold            Int           @default(0)
+  status          TicketStatus @default(AVAILABLE)
+  saleStartDate   DateTime?
+  saleEndDate     DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relations
+  registrations   Registration[]
+
+  @@index([eventId])
+  @@map("tickets")
+}
+
+// Registrations
+model Registration {
+  id                String             @id @default(cuid())
+  eventId           String
+  event             Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  ticketId          String
+  ticket            Ticket             @relation(fields: [ticketId], references: [id])
+  userId            String?
+  user              User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email             String
+  firstName         String
+  lastName          String
+  phone             String?
+  status            RegistrationStatus @default(PENDING)
+  paymentStatus     String?            // paid, pending, refunded
+  paymentIntentId   String?            // Stripe payment intent ID
+  amountPaid        Decimal?           @db.Decimal(10, 2)
+  metadata          Json?              // Additional registration data
+  registeredAt      DateTime           @default(now())
+  confirmedAt       DateTime?
+  canceledAt        DateTime?
+
+  // Relations
+  checkIns          CheckIn[]
+  feedback          Feedback[]
+
+  @@index([eventId])
+  @@index([userId])
+  @@index([email])
+  @@index([status])
+  @@map("registrations")
+}
+
+// Check-ins
+model CheckIn {
+  id              String       @id @default(cuid())
+  registrationId  String
+  registration    Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  eventId         String
+  event           Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  checkedInById   String?
+  checkedInBy     User?        @relation(fields: [checkedInById], references: [id], onDelete: SetNull)
+  checkedInAt     DateTime     @default(now())
+  notes           String?      @db.Text
+
+  @@index([registrationId])
+  @@index([eventId])
+  @@map("check_ins")
+}
+
+// Feedback
+model Feedback {
+  id            String   @id @default(cuid())
+  eventId       String
+  event         Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  registrationId String?
+  registration  Registration? @relation(fields: [registrationId], references: [id], onDelete: SetNull)
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  rating        Int      // 1-5
+  comment       String?  @db.Text
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([eventId])
+  @@map("feedback")
+}
+
+// Invoices
+model Invoice {
+  id                String   @id @default(cuid())
+  tenantId          String
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  stripeInvoiceId   String?  @unique
+  amount            Decimal  @db.Decimal(10, 2)
+  currency          String   @default("usd")
+  status            String   // draft, open, paid, void, uncollectible
+  invoiceUrl        String?
+  pdfUrl            String?
+  periodStart       DateTime
+  periodEnd         DateTime
+  paidAt            DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([status])
+  @@map("invoices")
+}
+
+// Usage Logs for Analytics
+model UsageLog {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  eventType   String   // event_created, registration, check_in, etc.
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([createdAt])
+  @@map("usage_logs")
+}
