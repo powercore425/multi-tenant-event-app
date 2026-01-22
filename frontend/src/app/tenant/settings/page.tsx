@@ -36,7 +36,12 @@ export default function SettingsPage() {
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
+    setValue,
   } = useForm<SettingsForm>()
+
+  const primaryColor = watch('primaryColor')
+  const secondaryColor = watch('secondaryColor')
 
   useEffect(() => {
     if (!isTenantUser()) {
@@ -188,11 +193,19 @@ export default function SettingsPage() {
                     <input
                       {...register('primaryColor')}
                       type="color"
+                      value={primaryColor || '#3B82F6'}
+                      onChange={(e) => {
+                        setValue('primaryColor', e.target.value, { shouldValidate: true })
+                      }}
                       className="w-20 h-12 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer"
                     />
                     <input
                       {...register('primaryColor')}
                       type="text"
+                      value={primaryColor || '#3B82F6'}
+                      onChange={(e) => {
+                        setValue('primaryColor', e.target.value, { shouldValidate: true })
+                      }}
                       className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-mono"
                     />
                   </div>
@@ -205,11 +218,19 @@ export default function SettingsPage() {
                     <input
                       {...register('secondaryColor')}
                       type="color"
+                      value={secondaryColor || '#8B5CF6'}
+                      onChange={(e) => {
+                        setValue('secondaryColor', e.target.value, { shouldValidate: true })
+                      }}
                       className="w-20 h-12 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer"
                     />
                     <input
                       {...register('secondaryColor')}
                       type="text"
+                      value={secondaryColor || '#8B5CF6'}
+                      onChange={(e) => {
+                        setValue('secondaryColor', e.target.value, { shouldValidate: true })
+                      }}
                       className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-mono"
                     />
                   </div>
