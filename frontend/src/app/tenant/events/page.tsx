@@ -178,17 +178,19 @@ export default function TenantEventsPage() {
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredEvents.map((event) => (
-              <div key={event.id} className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden">
+              <div key={event.id} className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 hover:scale-[1.02] group overflow-hidden">
                 {event.image && (
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="w-full h-48 object-cover"
-                  />
+                  <div className="overflow-hidden">
+                    <img
+                      src={event.image}
+                      alt={event.title}
+                      className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                  </div>
                 )}
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white transition-colors duration-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                       {event.title}
                     </h3>
                     <span
@@ -216,7 +218,7 @@ export default function TenantEventsPage() {
                   <div className="flex flex-col sm:flex-row gap-2">
                     <Link
                       href={`/tenant/events/${event.id}`}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2 text-white rounded transition-colors"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2 text-white rounded transition-all shadow-sm hover:shadow-md"
                       style={{
                         backgroundColor: colors.primaryColor,
                       }}
@@ -234,14 +236,14 @@ export default function TenantEventsPage() {
                       <>
                         <Link
                           href={`/tenant/events/${event.id}/edit`}
-                          className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+                          className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors shadow-sm hover:shadow-md"
                         >
                           <Edit className="h-4 w-4" />
                           <span>Edit</span>
                         </Link>
                         <button
                           onClick={() => handleDelete(event.id)}
-                          className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                          className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors shadow-sm hover:shadow-md"
                         >
                           <Trash2 className="h-4 w-4" />
                           <span>Delete</span>
@@ -257,14 +259,14 @@ export default function TenantEventsPage() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {filteredEvents.map((event) => (
-                <div key={event.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                <div key={event.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-300 transform hover:scale-[1.01] border-l-4 border-transparent hover:border-blue-500">
                   <div className="flex flex-col lg:flex-row gap-4">
                     {event.image && (
-                      <div className="flex-shrink-0">
+                      <div className="flex-shrink-0 overflow-hidden rounded-lg">
                         <img
                           src={event.image}
                           alt={event.title}
-                          className="w-full lg:w-48 h-32 lg:h-24 object-cover rounded-lg"
+                          className="w-full lg:w-48 h-32 lg:h-24 object-cover rounded-lg transition-transform duration-300 hover:scale-110"
                         />
                       </div>
                     )}
@@ -306,7 +308,7 @@ export default function TenantEventsPage() {
                       <div className="flex flex-wrap gap-2">
                         <Link
                           href={`/tenant/events/${event.id}`}
-                          className="px-4 py-2 text-white rounded transition-colors text-sm"
+                          className="inline-flex items-center gap-1.5 px-4 py-2 text-white rounded transition-all shadow-sm hover:shadow-md text-sm"
                           style={{
                             backgroundColor: colors.primaryColor,
                           }}
@@ -317,21 +319,24 @@ export default function TenantEventsPage() {
                             e.currentTarget.style.backgroundColor = colors.primaryColor
                           }}
                         >
-                          View
+                          <Eye className="h-4 w-4" />
+                          <span>View</span>
                         </Link>
                         {isAdmin && (
                           <>
                             <Link
                               href={`/tenant/events/${event.id}/edit`}
-                              className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm"
+                              className="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-all shadow-sm hover:shadow-md text-sm"
                             >
-                              Edit
+                              <Edit className="h-4 w-4" />
+                              <span>Edit</span>
                             </Link>
                             <button
                               onClick={() => handleDelete(event.id)}
-                              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+                              className="inline-flex items-center gap-1.5 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-all shadow-sm hover:shadow-md text-sm"
                             >
-                              Delete
+                              <Trash2 className="h-4 w-4" />
+                              <span>Delete</span>
                             </button>
                           </>
                         )}
