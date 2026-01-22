@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { PrismaClient, UserRole } from '@prisma/client';
 import { authenticate, requireTenantAdmin, requireTenantUser, AuthRequest } from '../middleware/auth';
@@ -11,7 +11,7 @@ router.use(authenticate);
 router.use(requireTenantUser);
 
 // Get tenant profile (read-only for tenant users, full access for admins)
-router.get('/profile', async (req: AuthRequest, res) => {
+router.get('/profile', async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?.tenantId) {
       return res.status(403).json({ error: 'No tenant associated' });
@@ -38,7 +38,7 @@ router.get('/profile', async (req: AuthRequest, res) => {
 });
 
 // Update tenant profile (admin only)
-router.put('/profile', requireTenantAdmin, async (req: AuthRequest, res) => {
+router.put('/profile', requireTenantAdmin, async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?.tenantId) {
       return res.status(403).json({ error: 'No tenant associated' });
@@ -85,7 +85,7 @@ router.put('/profile', requireTenantAdmin, async (req: AuthRequest, res) => {
 });
 
 // Get tenant users (admin only)
-router.get('/users', requireTenantAdmin, async (req: AuthRequest, res) => {
+router.get('/users', requireTenantAdmin, async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?.tenantId) {
       return res.status(403).json({ error: 'No tenant associated' });
@@ -193,7 +193,7 @@ router.post(
 );
 
 // Update user (admin only)
-router.put('/users/:userId', requireTenantAdmin, async (req: AuthRequest, res) => {
+router.put('/users/:userId', requireTenantAdmin, async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?.tenantId) {
       return res.status(403).json({ error: 'No tenant associated' });
@@ -237,7 +237,7 @@ router.put('/users/:userId', requireTenantAdmin, async (req: AuthRequest, res) =
 });
 
 // Delete user (admin only)
-router.delete('/users/:userId', requireTenantAdmin, async (req: AuthRequest, res) => {
+router.delete('/users/:userId', requireTenantAdmin, async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?.tenantId) {
       return res.status(403).json({ error: 'No tenant associated' });
@@ -269,7 +269,7 @@ router.delete('/users/:userId', requireTenantAdmin, async (req: AuthRequest, res
 });
 
 // Get tenant analytics
-router.get('/analytics', async (req: AuthRequest, res) => {
+router.get('/analytics', async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?.tenantId) {
       return res.status(403).json({ error: 'No tenant associated' });
@@ -343,7 +343,7 @@ router.get('/analytics', async (req: AuthRequest, res) => {
 });
 
 // Get invoices
-router.get('/invoices', async (req: AuthRequest, res) => {
+router.get('/invoices', async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?.tenantId) {
       return res.status(403).json({ error: 'No tenant associated' });

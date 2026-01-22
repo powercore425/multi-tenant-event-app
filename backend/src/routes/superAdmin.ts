@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { PrismaClient, PlanType, TenantStatus } from '@prisma/client';
 import { authenticate, requireSuperAdmin, AuthRequest } from '../middleware/auth';
@@ -14,7 +14,7 @@ router.use(authenticate);
 router.use(requireSuperAdmin);
 
 // Get all tenants
-router.get('/tenants', async (req, res) => {
+router.get('/tenants', async (req: AuthRequest, res: Response) => {
   try {
     const { page = 1, limit = 20, status, search } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
@@ -62,7 +62,7 @@ router.get('/tenants', async (req, res) => {
 });
 
 // Get single tenant
-router.get('/tenants/:id', async (req, res) => {
+router.get('/tenants/:id', async (req: AuthRequest, res: Response) => {
   try {
     const tenant = await prisma.tenant.findUnique({
       where: { id: req.params.id },
@@ -109,7 +109,7 @@ router.post(
     body('firstName').trim().notEmpty(),
     body('lastName').trim().notEmpty(),
   ],
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -192,7 +192,7 @@ router.post(
 );
 
 // Update tenant
-router.put('/tenants/:id', async (req, res) => {
+router.put('/tenants/:id', async (req: AuthRequest, res: Response) => {
   try {
     const {
       name,
@@ -228,7 +228,7 @@ router.put('/tenants/:id', async (req, res) => {
 });
 
 // Suspend tenant
-router.post('/tenants/:id/suspend', async (req, res) => {
+router.post('/tenants/:id/suspend', async (req: AuthRequest, res: Response) => {
   try {
     const tenant = await prisma.tenant.update({
       where: { id: req.params.id },
@@ -242,7 +242,7 @@ router.post('/tenants/:id/suspend', async (req, res) => {
 });
 
 // Activate tenant
-router.post('/tenants/:id/activate', async (req, res) => {
+router.post('/tenants/:id/activate', async (req: AuthRequest, res: Response) => {
   try {
     const tenant = await prisma.tenant.update({
       where: { id: req.params.id },
@@ -256,7 +256,7 @@ router.post('/tenants/:id/activate', async (req, res) => {
 });
 
 // Delete tenant
-router.delete('/tenants/:id', async (req, res) => {
+router.delete('/tenants/:id', async (req: AuthRequest, res: Response) => {
   try {
     const tenant = await prisma.tenant.findUnique({
       where: { id: req.params.id },
@@ -286,7 +286,7 @@ router.delete('/tenants/:id', async (req, res) => {
 });
 
 // Platform analytics
-router.get('/analytics', async (req, res) => {
+router.get('/analytics', async (req: AuthRequest, res: Response) => {
   try {
     const { startDate, endDate } = req.query;
 
@@ -437,7 +437,7 @@ router.get('/analytics', async (req, res) => {
 });
 
 // Get usage logs
-router.get('/logs', async (req, res) => {
+router.get('/logs', async (req: AuthRequest, res: Response) => {
   try {
     const { page = 1, limit = 50, tenantId, eventType } = req.query;
     const skip = (Number(page) - 1) * Number(limit);

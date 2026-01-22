@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { PrismaClient, EventStatus } from '@prisma/client';
 import { authenticate, requireTenantUser, AuthRequest } from '../middleware/auth';
@@ -7,7 +7,7 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 // Public: Get published events
-router.get('/public', async (req, res) => {
+router.get('/public', async (req: Request, res: Response) => {
   try {
     const { tenantSlug, page = 1, limit = 20, search, status } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
@@ -84,7 +84,7 @@ router.get('/public', async (req, res) => {
 });
 
 // Public: Get single event
-router.get('/public/:slug', async (req, res) => {
+router.get('/public/:slug', async (req: Request, res: Response) => {
   try {
     const { tenantSlug } = req.query;
 
@@ -147,7 +147,7 @@ router.use(authenticate);
 router.use(requireTenantUser);
 
 // Get tenant events
-router.get('/', async (req: AuthRequest, res) => {
+router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?.tenantId) {
       return res.status(403).json({ error: 'No tenant associated' });
@@ -205,7 +205,7 @@ router.get('/', async (req: AuthRequest, res) => {
 });
 
 // Get single event
-router.get('/:id', async (req: AuthRequest, res) => {
+router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?.tenantId) {
       return res.status(403).json({ error: 'No tenant associated' });
@@ -259,7 +259,7 @@ router.post(
     body('startDate').isISO8601(),
     body('endDate').isISO8601(),
   ],
-  async (req: AuthRequest, res) => {
+  async (req: AuthRequest, res: Response) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -350,7 +350,7 @@ router.post(
 );
 
 // Update event
-router.put('/:id', async (req: AuthRequest, res) => {
+router.put('/:id', async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?.tenantId) {
       return res.status(403).json({ error: 'No tenant associated' });
@@ -409,7 +409,7 @@ router.put('/:id', async (req: AuthRequest, res) => {
 });
 
 // Delete event
-router.delete('/:id', async (req: AuthRequest, res) => {
+router.delete('/:id', async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?.tenantId) {
       return res.status(403).json({ error: 'No tenant associated' });
@@ -443,7 +443,7 @@ router.post(
     body('name').trim().notEmpty(),
     body('price').isFloat({ min: 0 }),
   ],
-  async (req: AuthRequest, res) => {
+  async (req: AuthRequest, res: Response) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -496,7 +496,7 @@ router.post(
 );
 
 // Update ticket
-router.put('/:eventId/tickets/:ticketId', async (req: AuthRequest, res) => {
+router.put('/:eventId/tickets/:ticketId', async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?.tenantId) {
       return res.status(403).json({ error: 'No tenant associated' });
@@ -550,7 +550,7 @@ router.put('/:eventId/tickets/:ticketId', async (req: AuthRequest, res) => {
 });
 
 // Delete ticket
-router.delete('/:eventId/tickets/:ticketId', async (req: AuthRequest, res) => {
+router.delete('/:eventId/tickets/:ticketId', async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?.tenantId) {
       return res.status(403).json({ error: 'No tenant associated' });

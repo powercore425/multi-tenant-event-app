@@ -6,7 +6,7 @@ import api from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, Eye, XCircle, MoreVertical } from 'lucide-react'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 export default function RegistrationsPage() {
@@ -190,17 +190,44 @@ export default function RegistrationsPage() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                           {format(new Date(registration.registeredAt), 'MMM d, yyyy')}
                         </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                              {isAdmin && registration.status === 'CONFIRMED' && !registration.checkIns?.length && (
-                                <button
-                                  onClick={() => handleCheckIn(registration.id)}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
-                                >
-                                  <CheckCircle2 className="h-3.5 w-3.5" />
-                                  <span>Check In</span>
-                                </button>
-                              )}
-                            </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <div className="flex items-center gap-2">
+                            {isAdmin ? (
+                              <>
+                                {registration.status === 'CONFIRMED' && !registration.checkIns?.length && (
+                                  <button
+                                    onClick={() => handleCheckIn(registration.id)}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-all shadow-sm hover:shadow-md"
+                                    title="Check In"
+                                  >
+                                    <CheckCircle2 className="h-3.5 w-3.5" />
+                                    <span className="hidden sm:inline">Check In</span>
+                                  </button>
+                                )}
+                                {registration.status === 'CHECKED_IN' && registration.checkIns?.length > 0 && (
+                                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs rounded">
+                                    <CheckCircle2 className="h-3.5 w-3.5" />
+                                    <span className="hidden sm:inline">Checked In</span>
+                                  </span>
+                                )}
+                                {registration.status === 'CANCELLED' && (
+                                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 text-xs rounded">
+                                    <XCircle className="h-3.5 w-3.5" />
+                                    <span className="hidden sm:inline">Cancelled</span>
+                                  </span>
+                                )}
+                                {registration.status === 'PENDING' && (
+                                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 text-xs rounded">
+                                    <MoreVertical className="h-3.5 w-3.5" />
+                                    <span className="hidden sm:inline">Pending</span>
+                                  </span>
+                                )}
+                              </>
+                            ) : (
+                              <span className="text-gray-400 dark:text-gray-500 text-xs">-</span>
+                            )}
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>

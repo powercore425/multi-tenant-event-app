@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { PrismaClient, RegistrationStatus } from '@prisma/client';
 import { authenticate, requireTenantUser, AuthRequest } from '../middleware/auth';
@@ -23,7 +23,7 @@ router.post(
     body('firstName').trim().notEmpty(),
     body('lastName').trim().notEmpty(),
   ],
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -124,7 +124,7 @@ router.post(
       let amountPaid: number | null = null;
 
       // If ticket has a price, create Stripe payment intent
-      if (ticket.price > 0) {
+      if (parseFloat(ticket.price.toString()) > 0) {
         if (!stripe) {
           console.error('Stripe is not configured. Cannot process paid tickets.');
           return res.status(500).json({ error: 'Payment processing is not available. Please contact support.' });
@@ -162,11 +162,11 @@ router.post(
           firstName,
           lastName,
           phone,
-          status: ticket.price > 0 ? 'PENDING' : 'CONFIRMED',
-          paymentStatus: ticket.price > 0 ? 'pending' : 'paid',
+          status: parseFloat(ticket.price.toString()) > 0 ? 'PENDING' : 'CONFIRMED',
+          paymentStatus: parseFloat(ticket.price.toString()) > 0 ? 'pending' : 'paid',
           paymentIntentId,
           amountPaid: amountPaid !== null ? amountPaid : null,
-          confirmedAt: ticket.price === 0 ? new Date() : null,
+          confirmedAt: parseFloat(ticket.price.toString()) === 0 ? new Date() : null,
         },
         include: {
           event: {
@@ -208,7 +208,7 @@ router.post(
       res.status(201).json({
         registration,
         clientSecret,
-        message: ticket.price > 0 
+        message: parseFloat(ticket.price.toString()) > 0 
           ? 'Registration created. Please complete payment to confirm.' 
           : 'Registration confirmed successfully!',
       });
@@ -222,7 +222,7 @@ router.post(
 );
 
 // Confirm payment (webhook or manual)
-router.post('/:id/confirm-payment', async (req, res) => {
+router.post('/:id/confirm-payment', async (req: Request, res: Response) => {
   try {
     const { paymentIntentId } = req.body;
 
@@ -265,7 +265,7 @@ router.post('/:id/confirm-payment', async (req, res) => {
 router.use(authenticate);
 
 // Get user registrations
-router.get('/my-registrations', async (req: AuthRequest, res) => {
+router.get('/my-registrations', async (req: AuthRequest, res: Response) => {
   try {
     const registrations = await prisma.registration.findMany({
       where: { userId: req.user!.id },
@@ -294,7 +294,7 @@ router.get('/my-registrations', async (req: AuthRequest, res) => {
 });
 
 // Get single registration
-router.get('/:id', async (req: AuthRequest, res) => {
+router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const registration = await prisma.registration.findFirst({
       where: {
@@ -332,7 +332,7 @@ router.get('/:id', async (req: AuthRequest, res) => {
 router.use(requireTenantUser);
 
 // Get event registrations
-router.get('/event/:eventId', async (req: AuthRequest, res) => {
+router.get('/event/:eventId', async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?.tenantId) {
       return res.status(403).json({ error: 'No tenant associated' });
@@ -395,7 +395,7 @@ router.get('/event/:eventId', async (req: AuthRequest, res) => {
 router.put(
   '/:id/status',
   [body('status').isIn(['PENDING', 'CONFIRMED', 'CHECKED_IN', 'CANCELLED'])],
-  async (req: AuthRequest, res) => {
+  async (req: AuthRequest, res: Response) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -437,7 +437,7 @@ router.put(
 router.post(
   '/:id/check-in',
   [body('notes').optional()],
-  async (req: AuthRequest, res) => {
+  async (req: AuthRequest, res: Response) => {
     try {
       if (!req.user?.tenantId) {
         return res.status(403).json({ error: 'No tenant associated' });
