@@ -181,6 +181,11 @@ router.put(
         return res.status(404).json({ error: 'User not found' });
       }
 
+      // Prevent super admins from changing password
+      if (user.role === 'SUPER_ADMIN') {
+        return res.status(403).json({ error: 'Password change is not allowed for super admin accounts' });
+      }
+
       // Verify current password
       const { comparePassword } = await import('../utils/password');
       const isValid = await comparePassword(currentPassword, user.password);
