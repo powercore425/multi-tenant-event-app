@@ -8,6 +8,7 @@ import { format } from 'date-fns'
 import { useAuthStore } from '@/store/authStore'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { Building2 } from 'lucide-react'
 
 export default function EventsPage() {
   const [events, setEvents] = useState<any[]>([])
@@ -92,17 +93,44 @@ export default function EventsPage() {
                 <Link
                   key={event.id}
                   href={`/events/${event.slug}?tenantSlug=${event.tenant?.slug || ''}`}
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow"
+                  className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 hover:scale-[1.02] group overflow-hidden"
                 >
                   {event.image && (
-                    <img
-                      src={event.image}
-                      alt={event.title}
-                      className="w-full h-48 object-cover rounded-t-lg"
-                    />
+                    <div className="overflow-hidden rounded-t-lg">
+                      <img
+                        src={event.image}
+                        alt={event.title}
+                        className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
                   )}
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                    {/* Tenant Information */}
+                    {event.tenant && (
+                      <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-200 dark:border-gray-700">
+                        {event.tenant.logo ? (
+                          <img
+                            src={event.tenant.logo}
+                            alt={event.tenant.name}
+                            className="h-6 w-6 rounded object-cover"
+                          />
+                        ) : (
+                          <div
+                            className="h-6 w-6 rounded flex items-center justify-center"
+                            style={{
+                              backgroundColor: event.tenant.primaryColor || '#3b82f6',
+                            }}
+                          >
+                            <Building2 className="h-4 w-4 text-white" />
+                          </div>
+                        )}
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          {event.tenant.name}
+                        </span>
+                      </div>
+                    )}
+                    
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 transition-colors duration-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                       {event.title}
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
@@ -176,17 +204,44 @@ export default function EventsPage() {
                     <Link
                       key={event.id}
                       href={`/events/${event.slug}?tenantSlug=${event.tenant?.slug || ''}`}
-                      className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow"
+                      className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 hover:scale-[1.02] group overflow-hidden"
                     >
                       {event.image && (
-                        <img
-                          src={event.image}
-                          alt={event.title}
-                          className="w-full h-48 object-cover rounded-t-lg"
-                        />
+                        <div className="overflow-hidden rounded-t-lg">
+                          <img
+                            src={event.image}
+                            alt={event.title}
+                            className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                          />
+                        </div>
                       )}
                       <div className="p-6">
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                        {/* Tenant Information */}
+                        {event.tenant && (
+                          <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-200 dark:border-gray-700">
+                            {event.tenant.logo ? (
+                              <img
+                                src={event.tenant.logo}
+                                alt={event.tenant.name}
+                                className="h-6 w-6 rounded object-cover"
+                              />
+                            ) : (
+                              <div
+                                className="h-6 w-6 rounded flex items-center justify-center"
+                                style={{
+                                  backgroundColor: event.tenant.primaryColor || '#3b82f6',
+                                }}
+                              >
+                                <Building2 className="h-4 w-4 text-white" />
+                              </div>
+                            )}
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                              {event.tenant.name}
+                            </span>
+                          </div>
+                        )}
+                        
+                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 transition-colors duration-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
                           {event.title}
                         </h3>
                         <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">

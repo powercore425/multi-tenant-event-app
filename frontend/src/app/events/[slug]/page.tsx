@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form'
 import { useAuthStore } from '@/store/authStore'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import Link from 'next/link'
-import { CheckCircle2, Calendar, Ticket, User } from 'lucide-react'
+import { CheckCircle2, Calendar, Ticket, User, Building2, Globe } from 'lucide-react'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 interface RegistrationForm {
@@ -317,6 +317,48 @@ export default function EventDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">{event.title}</h1>
+
+            {/* Tenant Information */}
+            {event.tenant && (
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow mb-6 border-l-4" style={{ borderLeftColor: event.tenant.primaryColor || '#3b82f6' }}>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <Building2 className="h-5 w-5" style={{ color: event.tenant.primaryColor || '#3b82f6' }} />
+                  Organizer
+                </h2>
+                <div className="flex items-center gap-4">
+                  {event.tenant.logo ? (
+                    <img
+                      src={event.tenant.logo}
+                      alt={event.tenant.name}
+                      className="h-16 w-16 rounded-lg object-cover border-2"
+                      style={{ borderColor: event.tenant.primaryColor || '#3b82f6' }}
+                    />
+                  ) : (
+                    <div
+                      className="h-16 w-16 rounded-lg flex items-center justify-center shadow-md"
+                      style={{
+                        background: event.tenant.primaryColor && event.tenant.secondaryColor
+                          ? `linear-gradient(135deg, ${event.tenant.primaryColor}, ${event.tenant.secondaryColor})`
+                          : event.tenant.primaryColor || '#3b82f6',
+                      }}
+                    >
+                      <Building2 className="h-8 w-8 text-white" />
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                      {event.tenant.name}
+                    </h3>
+                    {event.tenant.slug && (
+                      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        <Globe className="h-4 w-4" />
+                        <span>{event.tenant.slug}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow mb-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">About</h2>
