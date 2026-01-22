@@ -56,7 +56,7 @@ export async function handleStripeWebhook(req: Request, res: Response) {
 
 async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
   try {
-    const { eventId, ticketId, email } = paymentIntent.metadata;
+    const { eventId, ticketId } = paymentIntent.metadata;
 
     if (!eventId || !ticketId) {
       console.error('Missing metadata in payment intent:', paymentIntent.id);

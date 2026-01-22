@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { Layout } from '@/components/Layout'
-import api from '@/lib/api'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { useAuthStore } from '@/store/authStore'
@@ -21,7 +20,7 @@ export default function EventsPage() {
   const [mounted, setMounted] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [sortOption, setSortOption] = useState<SortOption>('date-asc')
-  const { isAuthenticated, user } = useAuthStore()
+  const { isAuthenticated } = useAuthStore()
 
   useEffect(() => {
     setMounted(true)
@@ -96,25 +95,6 @@ export default function EventsPage() {
     }
 
     setFilteredEvents(sorted)
-  }
-
-  const getSortLabel = () => {
-    switch (sortOption) {
-      case 'date-asc':
-        return 'Date (Earliest)'
-      case 'date-desc':
-        return 'Date (Latest)'
-      case 'price-asc':
-        return 'Price (Low to High)'
-      case 'price-desc':
-        return 'Price (High to Low)'
-      case 'title-asc':
-        return 'Title (A-Z)'
-      case 'title-desc':
-        return 'Title (Z-A)'
-      default:
-        return 'Sort'
-    }
   }
 
   // Show loading state during hydration to prevent mismatch

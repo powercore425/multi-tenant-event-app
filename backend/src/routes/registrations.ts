@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import { PrismaClient, RegistrationStatus } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { authenticate, requireTenantUser, AuthRequest } from '../middleware/auth';
 import Stripe from 'stripe';
 

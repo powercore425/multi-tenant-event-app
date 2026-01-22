@@ -10,7 +10,6 @@ import Link from 'next/link'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import {
   Calendar,
-  MapPin,
   Ticket,
   CreditCard,
   CheckCircle2,
