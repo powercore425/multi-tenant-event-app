@@ -63,6 +63,7 @@ export function TenantTheme() {
       root.style.removeProperty('--primary-color')
       root.style.removeProperty('--secondary-color')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.tenant?.primaryColor, user?.tenant?.secondaryColor])
 
   // Also run on mount to ensure colors are applied immediately
@@ -80,6 +81,7 @@ export function TenantTheme() {
         root.style.setProperty('--secondary-color', tenant.secondaryColor)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return null

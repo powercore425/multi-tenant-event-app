@@ -48,6 +48,7 @@ export default function SettingsPage() {
       return
     }
     fetchProfile()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTenantUser, isAdmin, router])
 
   const fetchProfile = async () => {

@@ -32,6 +32,7 @@ export default function RegistrationsPage() {
     } else {
       setRegistrations([])
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedEvent])
 
   const fetchEvents = async () => {

@@ -109,7 +109,9 @@ export default function MyRegistrationsPage() {
         )
       case 'CHECKED_IN':
         return (
-          <span className={`${baseClasses} bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300`}>
+          <span
+            className={`${baseClasses} bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300`}
+          >
             <CheckCircle2 className="h-3 w-3" />
             Checked In
           </span>
@@ -373,7 +375,8 @@ export default function MyRegistrationsPage() {
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Amount</p>
                       </div>
                       <p className="text-lg font-bold text-green-600 dark:text-green-400">
-                        ${parseFloat(registration.amountPaid.toString()).toFixed(2)}
+                        {'$'}
+                        {parseFloat(registration.amountPaid.toString()).toFixed(2)}
                       </p>
                     </div>
                   )}
@@ -506,7 +509,8 @@ export default function MyRegistrationsPage() {
                             <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Amount</p>
                           </div>
                           <p className="text-sm font-bold text-green-600 dark:text-green-400">
-                            ${parseFloat(registration.amountPaid.toString()).toFixed(2)}
+                            {'$'}
+                            {parseFloat(registration.amountPaid.toString()).toFixed(2)}
                           </p>
                         </div>
                       )}
