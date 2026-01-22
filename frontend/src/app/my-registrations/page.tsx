@@ -83,10 +83,19 @@ export default function MyRegistrationsPage() {
                       <span className="font-medium">Registered:</span>{' '}
                       {format(new Date(registration.registeredAt), 'MMM d, yyyy')}
                     </p>
-                    {registration.amountPaid && (
+                    {registration.amountPaid !== null && registration.amountPaid > 0 && (
                       <p>
-                        <span className="font-medium">Amount Paid:</span> $
-                        {parseFloat(registration.amountPaid.toString()).toFixed(2)}
+                        <span className="font-medium">Payment:</span> $
+                        {parseFloat(registration.amountPaid.toString()).toFixed(2)} -{' '}
+                        <span className={`${
+                          registration.paymentStatus === 'paid'
+                            ? 'text-green-600 dark:text-green-400'
+                            : registration.paymentStatus === 'pending'
+                            ? 'text-yellow-600 dark:text-yellow-400'
+                            : 'text-red-600 dark:text-red-400'
+                        }`}>
+                          {registration.paymentStatus?.toUpperCase() || 'PENDING'}
+                        </span>
                       </p>
                     )}
                   </div>

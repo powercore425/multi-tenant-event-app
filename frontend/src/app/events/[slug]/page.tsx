@@ -11,6 +11,9 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import Link from 'next/link'
 import { CheckCircle2, Calendar, Ticket, User, Building2, Globe } from 'lucide-react'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { Elements } from '@stripe/react-stripe-js'
+import { PaymentForm } from '@/components/PaymentForm'
+import { getStripe } from '@/lib/stripe'
 
 interface RegistrationForm {
   ticketId: string
@@ -34,7 +37,14 @@ export default function EventDetailPage() {
   const [mounted, setMounted] = useState(false)
   const [existingRegistration, setExistingRegistration] = useState<any>(null)
   const [checkingRegistration, setCheckingRegistration] = useState(false)
+  const [paymentClientSecret, setPaymentClientSecret] = useState<string | null>(null)
+  const [paymentAmount, setPaymentAmount] = useState<number>(0)
+  const [currentRegistrationId, setCurrentRegistrationId] = useState<string | null>(null)
+  const [showPaymentForm, setShowPaymentForm] = useState(false)
   const { isAuthenticated, user } = useAuthStore()
+
+  // Initialize Stripe (with HTTP warning suppression in development)
+  const stripePromise = getStripe()
 
   useEffect(() => {
     setMounted(true)
@@ -253,15 +263,21 @@ export default function EventDetailPage() {
         throw new Error(errorMessage)
       }
 
-      // Show success message
-      setSuccess(true)
-      setError(null)
-
       // Handle payment if needed
-      if (responseData.clientSecret) {
-        // TODO: Integrate Stripe payment form here
-        // For now, show success but note payment is pending
-        console.log('Payment required. Client secret:', responseData.clientSecret)
+      if (responseData.clientSecret && responseData.registration) {
+        // Show payment form
+        const selectedTicket = event.tickets.find((t: any) => t.id === data.ticketId)
+        if (selectedTicket) {
+          setPaymentAmount(parseFloat(selectedTicket.price.toString()))
+          setPaymentClientSecret(responseData.clientSecret)
+          setCurrentRegistrationId(responseData.registration.id)
+          setShowPaymentForm(true)
+          setSuccess(false) // Don't show success yet, wait for payment
+        }
+      } else {
+        // Free ticket or no payment needed
+        setSuccess(true)
+        setError(null)
       }
 
       // Fetch registration status to show registered state
@@ -471,6 +487,27 @@ export default function EventDetailPage() {
                           </span>
                         </div>
                       </div>
+
+                      {existingRegistration.amountPaid !== null && existingRegistration.amountPaid > 0 && (
+                        <div className="flex items-start gap-3">
+                          <Ticket className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5" />
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Payment</p>
+                            <p className="text-sm text-gray-900 dark:text-white font-semibold">
+                              ${parseFloat(existingRegistration.amountPaid.toString()).toFixed(2)} -{' '}
+                              <span className={`${
+                                existingRegistration.paymentStatus === 'paid'
+                                  ? 'text-green-600 dark:text-green-400'
+                                  : existingRegistration.paymentStatus === 'pending'
+                                  ? 'text-yellow-600 dark:text-yellow-400'
+                                  : 'text-red-600 dark:text-red-400'
+                              }`}>
+                                {existingRegistration.paymentStatus?.toUpperCase() || 'PENDING'}
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -597,6 +634,40 @@ export default function EventDetailPage() {
                       {registering ? 'Registering...' : 'Register Now'}
                     </button>
                   </form>
+
+                  {/* Payment Form */}
+                  {showPaymentForm && paymentClientSecret && (
+                    <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                      <Elements
+                        stripe={stripePromise}
+                        options={{
+                          clientSecret: paymentClientSecret,
+                          appearance: {
+                            theme: 'stripe',
+                          },
+                        }}
+                      >
+                        <PaymentForm
+                          clientSecret={paymentClientSecret}
+                          amount={paymentAmount}
+                          registrationId={currentRegistrationId || undefined}
+                          onSuccess={() => {
+                            setShowPaymentForm(false)
+                            setPaymentClientSecret(null)
+                            setSuccess(true)
+                            setError(null)
+                            // Refresh registration status
+                            if (isAuthenticated() && user) {
+                              checkRegistrationStatus()
+                            }
+                          }}
+                          onError={(errorMessage) => {
+                            setError(errorMessage)
+                          }}
+                        />
+                      </Elements>
+                    </div>
+                  )}
                 </>
               )}
             </div>

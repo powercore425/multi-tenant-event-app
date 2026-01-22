@@ -10,6 +10,8 @@ import tenantRoutes from './routes/tenant';
 import eventRoutes from './routes/events';
 import registrationRoutes from './routes/registrations';
 import userRoutes from './routes/user';
+import paymentRoutes from './routes/payments';
+import { handleStripeWebhook } from './routes/payments';
 
 dotenv.config();
 
@@ -21,6 +23,11 @@ app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true,
 }));
+
+// Stripe webhook must be before express.json() middleware
+// Webhook endpoint needs raw body for signature verification
+app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -36,6 +43,7 @@ app.use('/api/tenant', tenantRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/registrations', registrationRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
