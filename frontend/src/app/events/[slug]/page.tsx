@@ -331,6 +331,7 @@ export default function EventDetailPage() {
             width={1200}
             height={400}
             className="w-full h-64 object-cover rounded-lg mb-6"
+            unoptimized
           />
         )}
 
@@ -354,6 +355,7 @@ export default function EventDetailPage() {
                       height={64}
                       className="h-16 w-16 rounded-lg object-cover border-2"
                       style={{ borderColor: event.tenant.primaryColor || '#3b82f6' }}
+                      unoptimized
                     />
                   ) : (
                     <div

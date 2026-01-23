@@ -189,6 +189,7 @@ export default function TenantEventsPage() {
                       width={800}
                       height={400}
                       className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                      unoptimized
                     />
                   </div>
                 )}

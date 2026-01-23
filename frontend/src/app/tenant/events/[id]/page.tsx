@@ -198,6 +198,7 @@ export default function TenantEventViewPage() {
             width={1200}
             height={400}
             className="w-full h-64 object-cover rounded-lg mb-6"
+            unoptimized
           />
         )}
 
