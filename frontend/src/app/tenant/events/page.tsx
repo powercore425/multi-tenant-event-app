@@ -267,7 +267,7 @@ export default function TenantEventsPage() {
                   <div className="flex flex-col lg:flex-row gap-4">
                     {event.image && (
                       <div className="flex-shrink-0 overflow-hidden rounded-lg">
-                        <Image
+                        <ImageWithLoading
                           src={event.image}
                           alt={event.title}
                           width={192}
