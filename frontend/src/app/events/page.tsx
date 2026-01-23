@@ -8,6 +8,7 @@ import { useAuthStore } from '@/store/authStore'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { Building2, Grid, List, ArrowUpDown, Calendar, MapPin, DollarSign } from 'lucide-react'
+import { ImageWithLoading } from '@/components/ImageWithLoading'
 
 type ViewMode = 'grid' | 'list'
 type SortOption = 'date-asc' | 'date-desc' | 'price-asc' | 'price-desc' | 'title-asc' | 'title-desc'
@@ -224,10 +225,14 @@ export default function EventsPage() {
                     {event.tenant && (
                       <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-200 dark:border-gray-700">
                         {event.tenant.logo ? (
-                          <img
+                          <ImageWithLoading
                             src={event.tenant.logo}
                             alt={event.tenant.name}
+                            width={28}
+                            height={28}
                             className="h-7 w-7 rounded-lg object-cover ring-2 ring-gray-200 dark:ring-gray-700"
+                            showBlur={false}
+                            showSpinner={false}
                           />
                         ) : (
                           <div
@@ -290,9 +295,11 @@ export default function EventsPage() {
                   <div className="flex flex-col sm:flex-row">
                     {event.image && (
                       <div className="relative w-full sm:w-64 h-48 sm:h-auto overflow-hidden">
-                        <img
+                        <ImageWithLoading
                           src={event.image}
                           alt={event.title}
+                          width={256}
+                          height={192}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
                       </div>

@@ -10,7 +10,7 @@ import { format } from 'date-fns'
 import { useTenantColors } from '@/hooks/useTenantColors'
 import { Grid, List, Eye, Edit, Trash2, Plus } from 'lucide-react'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
-import Image from 'next/image'
+import { ImageWithLoading } from '@/components/ImageWithLoading'
 
 export default function TenantEventsPage() {
   const { isTenantUser, user } = useAuthStore()
@@ -183,13 +183,12 @@ export default function TenantEventsPage() {
               <div key={event.id} className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 hover:scale-[1.02] group overflow-hidden">
                 {event.image && (
                   <div className="overflow-hidden">
-                    <Image
+                    <ImageWithLoading
                       src={event.image}
                       alt={event.title}
                       width={800}
                       height={400}
                       className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
-                      unoptimized
                     />
                   </div>
                 )}

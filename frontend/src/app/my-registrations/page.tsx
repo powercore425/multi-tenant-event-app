@@ -25,6 +25,7 @@ import {
   ArrowUpDown,
   Filter,
 } from 'lucide-react'
+import { ImageWithLoading } from '@/components/ImageWithLoading'
 
 type ViewMode = 'grid' | 'list'
 type SortOption = 'date-asc' | 'date-desc' | 'event-asc' | 'event-desc' | 'status-asc' | 'status-desc'
@@ -299,9 +300,11 @@ export default function MyRegistrationsPage() {
                 {/* Event Image */}
                 {registration.event?.image && (
                   <div className="relative h-48 overflow-hidden">
-                    <img
+                    <ImageWithLoading
                       src={registration.event.image}
                       alt={registration.event.title}
+                      width={400}
+                      height={192}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />

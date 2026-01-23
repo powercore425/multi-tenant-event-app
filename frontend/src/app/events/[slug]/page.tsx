@@ -14,7 +14,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { Elements } from '@stripe/react-stripe-js'
 import { PaymentForm } from '@/components/PaymentForm'
 import { getStripe } from '@/lib/stripe'
-import Image from 'next/image'
+import { ImageWithLoading } from '@/components/ImageWithLoading'
 
 interface RegistrationForm {
   ticketId: string
@@ -325,13 +325,12 @@ export default function EventDetailPage() {
     return (
       <div className="px-4 sm:px-6 lg:px-8 max-w-6xl">
         {event.image && (
-          <Image
+          <ImageWithLoading
             src={event.image}
             alt={event.title}
             width={1200}
             height={400}
             className="w-full h-64 object-cover rounded-lg mb-6"
-            unoptimized
           />
         )}
 
@@ -348,14 +347,14 @@ export default function EventDetailPage() {
                 </h2>
                 <div className="flex items-center gap-4">
                   {event.tenant.logo ? (
-                    <Image
+                    <ImageWithLoading
                       src={event.tenant.logo}
                       alt={event.tenant.name}
                       width={64}
                       height={64}
                       className="h-16 w-16 rounded-lg object-cover border-2"
                       style={{ borderColor: event.tenant.primaryColor || '#3b82f6' }}
-                      unoptimized
+                      showBlur={false}
                     />
                   ) : (
                     <div

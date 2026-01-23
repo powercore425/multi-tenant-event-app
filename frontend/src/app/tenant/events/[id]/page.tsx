@@ -10,7 +10,7 @@ import { format } from 'date-fns'
 import Link from 'next/link'
 import { Plus, X, Save, Edit, Trash2 } from 'lucide-react'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
-import Image from 'next/image'
+import { ImageWithLoading } from '@/components/ImageWithLoading'
 
 interface TicketForm {
   name: string
@@ -192,13 +192,12 @@ export default function TenantEventViewPage() {
         </div>
 
         {event.image && (
-          <Image
+          <ImageWithLoading
             src={event.image}
             alt={event.title}
             width={1200}
             height={400}
             className="w-full h-64 object-cover rounded-lg mb-6"
-            unoptimized
           />
         )}
 
