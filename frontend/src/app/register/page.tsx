@@ -7,6 +7,7 @@ import api from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 
 interface RegisterForm {
   email: string
@@ -47,6 +48,13 @@ export default function RegisterPage() {
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
+      <Link
+        href="/"
+        className="absolute top-4 left-4 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-gray-700"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        <span>Back to Home</span>
+      </Link>
       <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">

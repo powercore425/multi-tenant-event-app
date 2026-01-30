@@ -32,7 +32,7 @@ type SortOption = 'date-asc' | 'date-desc' | 'event-asc' | 'event-desc' | 'statu
 type StatusFilter = 'all' | 'CONFIRMED' | 'PENDING' | 'CHECKED_IN' | 'CANCELLED'
 
 export default function MyRegistrationsPage() {
-  const { isAuthenticated } = useAuthStore()
+  const { user, token } = useAuthStore()
   const router = useRouter()
   const [registrations, setRegistrations] = useState<any[]>([])
   const [filteredRegistrations, setFilteredRegistrations] = useState<any[]>([])
@@ -41,8 +41,10 @@ export default function MyRegistrationsPage() {
   const [sortOption, setSortOption] = useState<SortOption>('date-desc')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
 
+  const isAuthenticated = !!(user && token)
+
   useEffect(() => {
-    if (!isAuthenticated()) {
+    if (!isAuthenticated) {
       router.push('/login')
       return
     }

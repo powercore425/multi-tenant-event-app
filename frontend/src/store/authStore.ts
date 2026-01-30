@@ -34,7 +34,7 @@ const storage = typeof window !== 'undefined'
   ? createJSONStorage(() => localStorage)
   : undefined
 
-export const useAuthStore = create<AuthState>()(
+const authStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
@@ -70,3 +70,8 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 )
+
+export const useAuthStore = authStore
+
+// Helper selectors that are always safe to use
+export const useIsAuthenticated = () => useAuthStore((state) => !!(state.user && state.token))

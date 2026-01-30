@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { Layout } from '@/components/Layout'
 import api from '@/lib/api'
 import { format } from 'date-fns'
@@ -25,6 +25,7 @@ interface RegistrationForm {
 }
 
 export default function EventDetailPage() {
+  const router = useRouter()
   const params = useParams()
   const searchParams = useSearchParams()
   const slug = params?.slug as string
@@ -42,7 +43,9 @@ export default function EventDetailPage() {
   const [paymentAmount, setPaymentAmount] = useState<number>(0)
   const [currentRegistrationId, setCurrentRegistrationId] = useState<string | null>(null)
   const [showPaymentForm, setShowPaymentForm] = useState(false)
-  const { isAuthenticated, user } = useAuthStore()
+  const { user, token } = useAuthStore()
+  
+  const isAuthenticated = !!(user && token)
 
   // Initialize Stripe (with HTTP warning suppression in development)
   const stripePromise = getStripe()
@@ -74,14 +77,14 @@ export default function EventDetailPage() {
 
   // Check if user has already registered for this event
   useEffect(() => {
-    if (isAuthenticated() && user && event?.id && !checkingRegistration) {
+    if (isAuthenticated && user && event?.id && !checkingRegistration) {
       checkRegistrationStatus()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user, event?.id])
 
   const checkRegistrationStatus = async () => {
-    if (!isAuthenticated() || !user) return
+    if (!isAuthenticated || !user) return
     
     setCheckingRegistration(true)
     try {
@@ -101,7 +104,7 @@ export default function EventDetailPage() {
 
   // Pre-fill form with user info when authenticated
   useEffect(() => {
-    if (isAuthenticated() && user && event) {
+    if (isAuthenticated && user && event) {
       if (event.tickets && event.tickets.length > 0) {
         const defaultTicketId = event.tickets[0].id
         reset({
@@ -146,7 +149,7 @@ export default function EventDetailPage() {
       setEvent(data.event)
       
       // Pre-fill form with user info if authenticated
-      if (isAuthenticated() && user) {
+      if (isAuthenticated && user) {
         if (data.event?.tickets && data.event.tickets.length > 0) {
           const defaultTicketId = data.event.tickets[0].id
           reset({
@@ -229,7 +232,7 @@ export default function EventDetailPage() {
       }
 
       // If user is authenticated, include userId
-      if (isAuthenticated() && user) {
+      if (isAuthenticated && user) {
         registrationData.userId = user.id
       }
 
@@ -283,12 +286,12 @@ export default function EventDetailPage() {
       }
 
       // Fetch registration status to show registered state
-      if (isAuthenticated() && user) {
+      if (isAuthenticated && user) {
         await checkRegistrationStatus()
       }
 
       // Don't reset if user is logged in, keep their info
-      if (!isAuthenticated() || !user) {
+      if (!isAuthenticated || !user) {
         reset()
       } else {
         // Keep user info but reset ticket selection
@@ -518,7 +521,7 @@ export default function EventDetailPage() {
                     </div>
                   )}
 
-                  {isAuthenticated() && (
+                  {isAuthenticated && (
                     <Link
                       href="/my-registrations"
                       className="block w-full text-center px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors shadow-sm hover:shadow-md"
@@ -570,7 +573,7 @@ export default function EventDetailPage() {
                   </div>
                 )}
 
-                {isAuthenticated() && user && (
+                {isAuthenticated && user && (
                   <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 px-4 py-2 rounded text-sm">
                     Registering as: {user.firstName} {user.lastName} ({user.email})
                   </div>
@@ -584,7 +587,7 @@ export default function EventDetailPage() {
                     <input
                       {...register('firstName', { required: 'First name is required' })}
                       type="text"
-                      readOnly={!!(isAuthenticated() && user)}
+                      readOnly={!!(isAuthenticated && user)}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white read-only:opacity-50 read-only:cursor-not-allowed"
                     />
                     {errors.firstName && (
@@ -598,7 +601,7 @@ export default function EventDetailPage() {
                     <input
                       {...register('lastName', { required: 'Last name is required' })}
                       type="text"
-                      readOnly={!!(isAuthenticated() && user)}
+                      readOnly={!!(isAuthenticated && user)}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white read-only:opacity-50 read-only:cursor-not-allowed"
                     />
                     {errors.lastName && (
@@ -614,7 +617,7 @@ export default function EventDetailPage() {
                   <input
                     {...register('email', { required: 'Email is required', pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: 'Invalid email address' } })}
                     type="email"
-                    readOnly={!!(isAuthenticated() && user)}
+                    readOnly={!!(isAuthenticated && user)}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white read-only:opacity-50 read-only:cursor-not-allowed"
                   />
                   {errors.email && (
@@ -664,7 +667,7 @@ export default function EventDetailPage() {
                             setSuccess(true)
                             setError(null)
                             // Refresh registration status
-                            if (isAuthenticated() && user) {
+                            if (isAuthenticated && user) {
                               checkRegistrationStatus()
                             }
                           }}
@@ -693,39 +696,24 @@ export default function EventDetailPage() {
     )
   }
 
-  // If authenticated, use Layout
-  if (isAuthenticated()) {
-    return <Layout>{renderContent()}</Layout>
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (mounted && !isAuthenticated) {
+      router.push('/login')
+    }
+  }, [mounted, isAuthenticated, router])
+
+  // Show loading while redirecting
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <LoadingSpinner fullScreen size="lg" text="Redirecting to login..." />
+      </div>
+    )
   }
 
-  // Public layout for unauthenticated users
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <nav className="bg-white dark:bg-gray-800 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/" className="text-xl font-bold text-gray-900 dark:text-white">
-                Event SaaS
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <ThemeToggle />
-              <Link
-                href="/login"
-                className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-              >
-                Sign In
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 sm:px-6 lg:px-8 max-w-6xl">
-          {renderContent()}
-        </div>
-      </main>
-    </div>
-  )
+  // If authenticated, use Layout
+  if (isAuthenticated) {
+    return <Layout>{renderContent()}</Layout>
+  }
 }
