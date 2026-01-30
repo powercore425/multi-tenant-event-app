@@ -19,13 +19,15 @@ interface SettingsForm {
 }
 
 export default function SettingsPage() {
-  const { isAuthenticated, user } = useAuthStore()
+  const { user, token } = useAuthStore()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile')
+
+  const isAuthenticated = !!(user && token)
 
   const {
     register,
@@ -38,7 +40,7 @@ export default function SettingsPage() {
   const newPassword = watch('newPassword')
 
   useEffect(() => {
-    if (!isAuthenticated()) {
+    if (!isAuthenticated) {
       router.push('/login')
       return
     }

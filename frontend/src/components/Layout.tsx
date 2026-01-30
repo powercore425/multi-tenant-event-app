@@ -31,18 +31,21 @@ function rgbToHex(r: number, g: number, b: number): string {
 }
 
 export function Layout({ children }: LayoutProps) {
-  const { user, clearAuth, isAuthenticated } = useAuthStore()
+  const { user, token, clearAuth } = useAuthStore()
   const router = useRouter()
   const pathname = usePathname()
   const [mounted, setMounted] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  // Check authentication by directly checking user and token
+  const isAuthenticated = !!(user && token)
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
   useEffect(() => {
-    if (mounted && !isAuthenticated()) {
+    if (mounted && !isAuthenticated) {
       // Use replace to avoid adding to history
       router.replace('/login')
     }
@@ -57,7 +60,7 @@ export function Layout({ children }: LayoutProps) {
     )
   }
 
-  if (!isAuthenticated()) {
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <LoadingSpinner fullScreen size="lg" text="Redirecting..." />
