@@ -26,7 +26,8 @@ import {
   ChevronUp,
   TrendingUp,
   MessageSquare,
-  Heart
+  Heart,
+  ArrowUp
 } from 'lucide-react'
 
 function FAQItem({ question, answer }: { question: string; answer: string }) {
@@ -96,10 +97,28 @@ function AnimatedSection({ children, className = '' }: { children: React.ReactNo
 export default function LandingPage() {
   const { user, token } = useAuthStore()
   const [mounted, setMounted] = useState(false)
+  const [showScrollTop, setShowScrollTop] = useState(false)
 
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show button when user scrolls down more than 300px
+      setShowScrollTop(window.scrollY > 300)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
 
   // Prevent hydration mismatch by not checking auth until mounted
   // On server, always render as unauthenticated to match initial client render
@@ -814,6 +833,16 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Scroll to Top Button */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed bottom-8 right-8 z-50 p-4 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
+          }`}
+        aria-label="Scroll to top"
+      >
+        <ArrowUp className="h-6 w-6" />
+      </button>
     </div>
   )
 }
