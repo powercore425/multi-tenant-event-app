@@ -126,6 +126,13 @@ export default function EventDetailPage() {
     }
   }, [isAuthenticated, user, event, reset, setValue])
 
+  // Redirect to login if not authenticated (must be before any early returns)
+  useEffect(() => {
+    if (mounted && !isAuthenticated) {
+      router.push('/login')
+    }
+  }, [mounted, isAuthenticated, router])
+
   const fetchEvent = async () => {
     try {
       setFetchError(null)
@@ -695,13 +702,6 @@ export default function EventDetailPage() {
       </div>
     )
   }
-
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (mounted && !isAuthenticated) {
-      router.push('/login')
-    }
-  }, [mounted, isAuthenticated, router])
 
   // Show loading while redirecting
   if (!isAuthenticated) {
